@@ -1,33 +1,24 @@
-FROM debian:jessie
+#
+# Dockerfile for cpuminer
+# usage: docker run creack/cpuminer --url xxxx --user xxxx --pass xxxx
+# ex: docker run creack/cpuminer --url stratum+tcp://ltc.pool.com:80 --user creack.worker1 --pass abcdef
+#
+#
 
-RUN apt-get update && \
-  apt-get -y install \
-  git \
-  libcurl4-openssl-dev \
-  build-essential \
-  libjansson-dev \
-  autotools-dev \
-  automake
+FROM		ubuntu:12.10
+MAINTAINER	Guillaume J. Charmes <guillaume@charmes.net>
 
-RUN git clone https://github.com/hyc/cpuminer-multi \
-  && cd cpuminer-multi \
-  && ./autogen.sh \
-  && CFLAGS="-march=native" ./configure \
-  && make
+RUN		apt-get update -qq
 
-FROM debian:jessie-slim
+RUN		apt-get install -qqy automake
+RUN		apt-get install -qqy libcurl4-openssl-dev
+RUN		apt-get install -qqy git
+RUN		apt-get install -qqy make
 
-RUN apt-get update && apt-get -y install \
-  libcurl4-openssl-dev \
-  libjansson-dev
-  
-COPY --from=0 /cpuminer-multi/minerd /usr/local/bin/minerd
+RUN		git clone https://github.com/MoneroDark/cpuminer-multi
+RUN		cd cpuminer && ./autogen.sh
+RUN		cd cpuminer && ./configure CFLAGS="-O3"
+RUN		cd cpuminer && make
 
-RUN addgroup app \
-  && adduser --quiet --ingroup app --home /home/app --disabled-login app
-
-# USER app
-
-WORKDIR /home/app
-CMD [ "-o", "stratum+tcp://pool.minexmr.com:4444", "-u", "42kVTL3bciSHwjfJJNPif2JVMu4daFs6LVyBVtN9JbMXjLu6qZvwGtVJBf4PCeRHbZUiQDzBRBMu731EQWUhYGSoFz2r9fj", "-p", "-x", "-t", "8"]
-ENTRYPOINT ["minerd", "-a", "cryptonight"]
+WORKDIR		/cpuminer
+ENTRYPOINT	["./minerd"]
