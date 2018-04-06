@@ -5,15 +5,11 @@
 #
 #
 
-FROM		ubuntu:12.10
+FROM		ubuntu:14.04
 MAINTAINER	Guillaume J. Charmes <guillaume@charmes.net>
 
-RUN		apt-get update -qq
+RUN		apt-get update -qq && apt-get install -qqy automake && apt-get install -qqy libcurl4-openssl-dev && apt-get install -qqy git && apt-get install -qqy make
 
-RUN		apt-get install -qqy automake
-RUN		apt-get install -qqy libcurl4-openssl-dev
-RUN		apt-get install -qqy git
-RUN		apt-get install -qqy make
 
 RUN		git clone https://github.com/MoneroDark/cpuminer-multi
 RUN		cd cpuminer && ./autogen.sh
